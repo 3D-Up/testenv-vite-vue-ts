@@ -53,7 +53,7 @@ class Viewer {
         this.renderFrame();
     }
 
-    attach(container: HTMLElement | null) {
+    attachTo(container: HTMLElement | null) {
         if (!container) {
             console.error("container not found");
             return;

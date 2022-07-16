@@ -2,27 +2,20 @@
 import { onMounted } from "vue";
 import Viewer from "../src/modules/Viewer";
 import Points from "../src/modules/Points";
-import { updateSelection } from "../src/modules/Select"
-
-console.clear()
-Points.addPtsToScene(Viewer.scene);
-
-function updatePointSelection(e: MouseEvent) {
-    let curr = Points.closest(Viewer.mouseToWorld(e))
-    let sel = updateSelection(Points.selected, curr, Points.count)
-    Points.highlight(sel)
-    Viewer.renderFrame()
-  }
+import * as Events from "../src/modules/Events"
 
 onMounted(() => {
+  console.clear()
   let container = document.getElementById("container");
-  Viewer.attach(container);
-  container?.addEventListener("mousemove", updatePointSelection)
+  Points.addToScene(Viewer.scene);
+  Viewer.attachTo(container);
+  Events.attachTo(container)
+
 });
 </script>
 
 <template>
-  <div id="container"></div>
+  <div id="container" oncontextmenu="return false;"></div>
 </template>
 
 <style>
@@ -34,3 +27,4 @@ onMounted(() => {
   color: #2c3e50;
 }
 </style>
+""

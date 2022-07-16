@@ -37,7 +37,7 @@ class Points {
         });
     }
 
-    addPtsToScene = (scene: Scene) => {
+    addToScene = (scene: Scene) => {
         let highlighted = new Mesh(this.ptGeometry, this.materials.red);
         highlighted.position.copy(this.meshes[this.selected].position);
         highlighted.scale.setScalar(1.3);

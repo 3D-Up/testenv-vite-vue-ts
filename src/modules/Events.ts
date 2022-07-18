@@ -1,5 +1,8 @@
 import Viewer from "./Viewer";
-import { mouseMeshIntersection } from "./Intersect";
+import {
+    mouseMeshIntersection,
+    optimizedMouseMeshIntersection,
+} from "./Intersect";
 import pts from "./Points";
 
 const USE_OPTIMIZED = false;
@@ -30,7 +33,7 @@ function mouseMove(e: MouseEvent) {
     // optimized mesh intersect
     if (USE_OPTIMIZED) {
         timerStart = new Date().getTime();
-        let intersection = mouseMeshIntersection(
+        let intersection = optimizedMouseMeshIntersection(
             mouse,
             Viewer.camera.position,
             ...pts.meshes
@@ -70,6 +73,7 @@ function rightClick(e: MouseEvent) {
     console.log("RMB");
 }
 
+// runtime eval
 const _timings = {
     default: { logs: 0, avg: null as null | number },
     optimized: { logs: 0, avg: null as null | number },

@@ -9,6 +9,14 @@ export function mouseMeshIntersection(
     return { index: -1, position: new Vector3() };
 }
 
+export function optimizedMouseMeshIntersection(
+    mouse: Vector3,
+    camera: Vector3,
+    ...meshes: Mesh[]
+) {
+    return mouseMeshIntersection(mouse, camera, ...meshes);
+}
+
 type MouseMeshIntersection =
     | { index: number; position: Vector3 } // on hit
     | { index: -1; position: Vector3 }; // on miss

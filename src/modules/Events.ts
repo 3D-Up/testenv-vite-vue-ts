@@ -1,6 +1,8 @@
-import Points from "./Points";
 import Viewer from "./Viewer";
-import { updateSelection } from "./Select";
+import { mouseMeshIntersection } from "./Intersect";
+import pts from "./Points";
+
+const USE_OPTIMIZED = false;
 
 export function attachTo(element: HTMLElement | null) {
     if (!element) {
@@ -12,10 +14,46 @@ export function attachTo(element: HTMLElement | null) {
 }
 
 function mouseMove(e: MouseEvent) {
-    // update point selection
-    let curr = Points.closest(Viewer.mouseToWorld(e));
-    let sel = updateSelection(Points.selected, curr, Points.count);
-    Points.highlight(sel);
+    let mouse = Viewer.mouseToWorld(e);
+    Viewer.mouseHelper.position.copy(mouse);
+
+    // mesh intersect
+    let timerStart = new Date().getTime();
+    let { index, position } = mouseMeshIntersection(
+        mouse,
+        Viewer.camera.position,
+        ...pts.meshes
+    );
+    let timerEnd = new Date().getTime();
+    logTime("default", timerEnd - timerStart);
+
+    // optimized mesh intersect
+    if (USE_OPTIMIZED) {
+        timerStart = new Date().getTime();
+        let intersection = mouseMeshIntersection(
+            mouse,
+            Viewer.camera.position,
+            ...pts.meshes
+        );
+
+        timerEnd = new Date().getTime();
+        logTime("optimized", timerEnd - timerStart);
+        let def = _timings["default"].avg ?? 0;
+        let opt = _timings["optimized"].avg ?? 0;
+
+        console.log(
+            `default: ${(def * 1).toFixed(3)} μs, optimized: ${(
+                opt * 1
+            ).toFixed(3)} μs`
+        );
+
+        index = intersection.index;
+        position = intersection.position;
+    }
+
+    if (index >= 0) pts.highlightOne(index);
+    else pts.highlightNone();
+
     Viewer.renderFrame();
 }
 
@@ -30,4 +68,20 @@ function leftClick(e: MouseEvent) {
 
 function rightClick(e: MouseEvent) {
     console.log("RMB");
+}
+
+const _timings = {
+    default: { logs: 0, avg: null as null | number },
+    optimized: { logs: 0, avg: null as null | number },
+};
+function logTime(name: "default" | "optimized", durationMs: number) {
+    if (_timings[name].avg == null) {
+        _timings[name].avg = durationMs;
+        _timings[name].logs = 1;
+    } else {
+        let adjustment = durationMs - _timings[name].avg!;
+        adjustment /= _timings[name].logs;
+        _timings[name].avg! += adjustment;
+        _timings[name].logs += 1;
+    }
 }

@@ -11,6 +11,7 @@ import {
     PlaneBufferGeometry,
     Raycaster,
     Scene,
+    SphereBufferGeometry,
     Vector3,
     WebGLRenderer,
 } from "three";
@@ -22,6 +23,7 @@ class Viewer {
     camera: PerspectiveCamera;
     renderer: WebGLRenderer;
     floor: Mesh;
+    mouseHelper: Mesh;
 
     constructor() {
         // Scene
@@ -49,6 +51,13 @@ class Viewer {
         );
         this.floor.visible = false;
         this.scene.add(this.floor);
+
+        // mousehelper
+        this.mouseHelper = new Mesh(
+            new SphereBufferGeometry(0.3),
+            new MeshBasicMaterial({ color: 0x000000 })
+        );
+        this.scene.add(this.mouseHelper);
 
         this.renderFrame();
     }
@@ -98,6 +107,12 @@ class Viewer {
         if (intersects.length == 0) return new Vector3();
         const intersectPt = intersects[0].point;
         return intersectPt;
+    }
+
+    mouseToDeviceCoordinates(event: MouseEvent) {
+        let x = (event.clientX / window.innerWidth) * 2 - 1;
+        let y = -(event.clientY / window.innerHeight) * 2 + 1;
+        return { x, y };
     }
 }
 

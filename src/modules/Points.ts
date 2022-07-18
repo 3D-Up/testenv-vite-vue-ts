@@ -7,7 +7,7 @@ import {
 } from "three";
 
 const SET_RANDOM = false;
-const [COUNT, RADIUS] = [50, 20];
+const [SIZE, SEGMENTS, COUNT, RADIUS] = [10, 100, 6, 20];
 
 class Points {
     materials = {
@@ -16,8 +16,8 @@ class Points {
         red: new MeshBasicMaterial({ color: 0xff5555 }),
     };
     points = [] as Vector3[];
-    private meshes = [] as Mesh[];
-    private ptGeometry = new CircleBufferGeometry(1, 25);
+    meshes = [] as Mesh[];
+    private ptGeometry = new CircleBufferGeometry(SIZE, SEGMENTS);
     selected: number;
 
     constructor(readonly count: number, readonly radius: number) {
@@ -38,20 +38,33 @@ class Points {
     }
 
     addToScene = (scene: Scene) => {
-        let highlighted = new Mesh(this.ptGeometry, this.materials.red);
+        /* let highlighted = new Mesh(this.ptGeometry, this.materials.red);
         highlighted.position.copy(this.meshes[this.selected].position);
         highlighted.scale.setScalar(1.3);
         highlighted.renderOrder = -1;
 
-        scene.add(highlighted);
+        scene.add(highlighted); */
         scene.add(...this.meshes);
     };
 
     highlight(highlighted: boolean[]) {
-        highlighted.forEach((h, i) => {
-            this.meshes[i].material = h
+        this.meshes.forEach((m, i) => {
+            m.material = highlighted[i]
                 ? this.materials.blue
                 : this.materials.gray;
+        });
+    }
+
+    highlightOne(index: number) {
+        this.meshes.forEach((m, i) => {
+            m.material =
+                i === index ? this.materials.blue : this.materials.gray;
+        });
+    }
+
+    highlightNone() {
+        this.meshes.forEach((m) => {
+            m.material = this.materials.gray;
         });
     }
 

@@ -1,13 +1,13 @@
 export function updateSelection(
-    /** selection starts at Index */
-    start: number,
-    /** currently closest Index */
-    current: number,
-    /** total number of items */
-    length: number
+    start: number, // highlighting starts at Index
+    current: number, // closest Index to mouse
+    length: number // total number of circles */
 ): boolean[] {
-    // todo
-    console.log({ start, current, length });
+    // todo:
+    // return a boolean for each circle: highlighted or not
+    // highlight every circle clockwise from the start Index to the current Index
+
+    console.log({ current });
 
     return [];
 }

@@ -1,7 +1,7 @@
 export function updateSelection(
-    start: number, // highlighting starts at Index
-    current: number, // closest Index to mouse
-    length: number // total number of circles */
+    start: number, // highlighting starts at this index
+    current: number, // highlighting stops at this index
+    length: number // total number of circles/ values to return
 ): boolean[] {
     // todo:
     // return a boolean for each circle: highlighted or not

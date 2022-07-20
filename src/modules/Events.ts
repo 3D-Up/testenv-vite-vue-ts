@@ -1,6 +1,6 @@
 import Points from "./Points";
 import Viewer from "./Viewer";
-import { updateSelection } from "./Select";
+import { updateHighlightStates } from "./Select";
 
 export function attachTo(element: HTMLElement | null) {
     if (!element) {
@@ -14,7 +14,7 @@ export function attachTo(element: HTMLElement | null) {
 function mouseMove(e: MouseEvent) {
     // update point selection
     let curr = Points.closest(Viewer.mouseToWorld(e));
-    let sel = updateSelection(Points.selected, curr, Points.count);
+    let sel = updateHighlightStates(Points.selected, curr, Points.count);
     Points.highlight(sel);
     Viewer.renderFrame();
 }

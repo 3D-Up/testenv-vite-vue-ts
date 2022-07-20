@@ -1,4 +1,4 @@
-export function updateSelection(
+export function updateHighlightStates(
     start: number,
     current: number,
     length: number

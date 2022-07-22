@@ -24,9 +24,10 @@ class Points {
         this.selected = SET_RANDOM ? Math.floor(Math.random() * count) : 0;
 
         for (let i = 0; i < count; i++) {
-            let a = (2 * Math.PI * i) / count;
-            let x = Math.sin(a) * this.radius;
-            let y = Math.cos(a) * this.radius;
+            let angle = Math.PI * 1.5; // start from 12:00 position
+            angle += (2 * Math.PI * i) / count;
+            let x = Math.sin(angle) * this.radius;
+            let y = Math.cos(angle) * this.radius;
             this.points.push(new Vector3(x, y, 0));
         }
 

@@ -41,6 +41,7 @@ class Points {
     addToScene = (scene: Scene) => {
         let highlighted = new Mesh(this.ptGeometry, this.materials.red);
         highlighted.position.copy(this.meshes[this.selected].position);
+        highlighted.position.add(new Vector3(0, 0, -0.001));
         highlighted.scale.setScalar(1.3);
         highlighted.renderOrder = -1;
 

@@ -12,7 +12,7 @@ export function deform(
 
     //TODO  adjust to measurements
 
-    ////// sample code - do something
+    ////// sample code - do something with the geometry
     const v = geometry.attributes.position;
     const n = geometry.attributes.normal;
     const o = value;

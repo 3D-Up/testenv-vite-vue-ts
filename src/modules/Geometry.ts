@@ -1,38 +1,80 @@
-import { BufferGeometry, Material, Mesh, Ray, Triangle, Vector3 } from "three";
+import {
+    BufferAttribute,
+    BufferGeometry,
+    CylinderBufferGeometry,
+    Line3,
+    LineSegments,
+    Mesh,
+    MeshBasicMaterial,
+    MeshLambertMaterial,
+    Plane,
+    PlaneBufferGeometry,
+    Quaternion,
+    Scene,
+    Vector3,
+} from "three";
 
-export function getMeshFaceTriangle(mesh: Mesh, faceIndex: number): Triangle {
-    const [a, b, c] = getFaceVertices(mesh, getMeshFace(mesh, faceIndex));
-    return new Triangle(a, b, c);
+export const GEOMETRY = new CylinderBufferGeometry(100, 100, 400, 24, 10, false)
+    .rotateX(Math.PI / 2)
+    .rotateX(Math.PI / 30)
+    .rotateY(Math.PI / 30);
+GEOMETRY.computeVertexNormals();
+
+const plane1 = new Plane(new Vector3(0, 0, 1), -150);
+const plane2 = new Plane(new Vector3(0, 0, 1), 0);
+const plane3 = new Plane(new Vector3(0, 0, 1), 150);
+export const PLANES = [plane1, plane2, plane3];
+
+export const LINES = new BufferGeometry().setFromPoints([]);
+
+export function updateLINES(lines: Line3[]) {
+    LINES.deleteAttribute("position");
+    const xyzArr = lines.flatMap((l) => [
+        ...l.start.toArray(),
+        ...l.end.toArray(),
+    ]);
+    LINES.setAttribute(
+        "position",
+        new BufferAttribute(new Float32Array(xyzArr), 3)
+    );
 }
 
-export function getMeshFace(mesh: Mesh, faceIndex: number) {
-    const faces = mesh.geometry.index;
-    let fI = faceIndex * 3;
-    const face: [number, number, number] = [
-        faces?.array[fI] ?? fI,
-        faces?.array[++fI] ?? fI,
-        faces?.array[++fI] ?? fI,
-    ];
+// Display Meshes
 
-    return face;
-}
+const materials = {
+    blue: new MeshLambertMaterial({
+        color: 0x5555ff,
+        transparent: true,
+        opacity: 0.1,
+        depthTest: false,
+    }),
+    wireframe: new MeshLambertMaterial({
+        color: 0,
+        wireframe: true,
+    }),
+    green: new MeshBasicMaterial({
+        color: 0x00ff00,
+        depthTest: false,
+    }),
+};
 
-export function getFaceVertices(
-    mesh: Mesh<BufferGeometry, Material | Material[]>,
-    face: [number, number, number]
-) {
-    const vertices = mesh.geometry.getAttribute("position");
-    const [a, b, c] = face.map((vI) => {
-        return new Vector3(
-            vertices.getX(vI),
-            vertices.getY(vI),
-            vertices.getZ(vI)
-        );
-    });
-    return [a, b, c];
-}
+// cylinder meshes share geometry
+const cylinder = new Mesh(GEOMETRY, materials.blue);
+const cylinderWireframe = new Mesh(GEOMETRY, materials.wireframe);
 
-function intersectRayTriangle(ray: Ray, triangle: Triangle) {
-    let { a, b, c } = triangle;
-    return ray.intersectTriangle(a, b, c, false, new Vector3());
-}
+const planePreviews = PLANES.map((p, i) => {
+    const v = p.normal.clone().multiplyScalar(p.constant);
+    const geometry = new PlaneBufferGeometry(300, 300).translate(v.x, v.y, v.z);
+
+    return new Mesh(geometry, materials.wireframe);
+});
+
+const intersectionPreview = new LineSegments(LINES, materials.green);
+
+export const addToScene = (scene: Scene) =>
+    scene.add(
+        cylinder,
+        //cylinderWireframe,
+        ...planePreviews,
+        intersectionPreview
+    );
